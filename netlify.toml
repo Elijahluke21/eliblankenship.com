@@ -1,0 +1,11 @@
+# Plain static site: no build step, publish the repo root.
+[build]
+  publish = "."
+  command = ""
+
+# Send www to the bare domain.
+[[redirects]]
+  from = "https://www.eliblankenship.com/*"
+  to = "https://eliblankenship.com/:splat"
+  status = 301
+  force = true

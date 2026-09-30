@@ -10,7 +10,8 @@ assets/css/site.css        Shared styles and color tokens (light + dark)
 maps/index.html            Maps gallery, grouped by era
 maps/<map-name>/index.html One self-contained interactive map per folder
 blog/  resources/  about/  Section pages
-404.html                   Not-found page (served automatically by Cloudflare Pages)
+404.html                   Not-found page (served automatically by Netlify)
+netlify.toml               Netlify settings (no build step, www → bare domain)
 favicon.svg                Sailboat mark
 ```
 
@@ -22,10 +23,9 @@ favicon.svg                Sailboat mark
 
 ## Hosting
 
-Hosted on Cloudflare Pages, connected to this repo:
+Hosted on Netlify, connected to this repo. Every push to `main` redeploys automatically.
 
-- Framework preset: **None**
-- Build command: *(leave empty)*
-- Build output directory: `/`
+- Build command: *(none)*
+- Publish directory: `.` (set in `netlify.toml`)
 
-Domain: `eliblankenship.com` is registered at GoDaddy, with its nameservers pointed to Cloudflare.
+Domain: `eliblankenship.com` is registered at GoDaddy. DNS records point to Netlify.
