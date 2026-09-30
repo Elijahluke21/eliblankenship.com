@@ -102,6 +102,7 @@ main{padding-block:clamp(40px,8vw,88px) 64px;display:flex;flex-direction:column;
 .links a::after{content:" ↗";font-size:14px;color:var(--accent)}
 .links .host{font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
 .links p{grid-column:1/-1;margin:0;color:var(--ink-2);font-size:15px}
+.links .badge{display:inline-block;margin-right:6px;vertical-align:1px}
 
 /* empty state */
 .empty{border:1px dashed var(--line);border-radius:6px;padding:28px;background:color-mix(in srgb,var(--panel) 70%,transparent);display:flex;flex-direction:column;gap:8px;max-width:640px}
