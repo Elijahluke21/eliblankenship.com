@@ -95,6 +95,14 @@ main{padding-block:clamp(40px,8vw,88px) 64px;display:flex;flex-direction:column;
 /* map cards (maps page) */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:16px}
 
+/* resource links */
+.links{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:0 32px}
+.links li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:2px 12px;padding:16px 0;border-bottom:1px solid var(--line);min-width:0}
+.links a{font-family:var(--f-display);font-size:22px;text-decoration:none}
+.links a::after{content:" ↗";font-size:14px;color:var(--accent)}
+.links .host{font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
+.links p{grid-column:1/-1;margin:0;color:var(--ink-2);font-size:15px}
+
 /* empty state */
 .empty{border:1px dashed var(--line);border-radius:6px;padding:28px;background:color-mix(in srgb,var(--panel) 70%,transparent);display:flex;flex-direction:column;gap:8px;max-width:640px}
 .empty p{margin:0;color:var(--ink-2)}
