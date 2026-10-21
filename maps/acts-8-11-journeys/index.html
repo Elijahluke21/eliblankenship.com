@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Acts 8–11 Journeys · Eli Blankenship</title>
+<meta name="description" content="Interactive map of Philip, Saul, and Peter in Acts 8–11: their journeys across Judea, Samaria, Syria, and Cilicia, c. AD 33–47, step by step.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>.back{display:inline-block;margin-bottom:10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-decoration:none}.back:hover{color:var(--ink)}</style>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Literata:opsz,wght@7..72,400;7..72,600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: slim header, then two map panes (full region + Judea & Samaria detail) beside a control panel; stacks on phones */
+:root{
+  --bg:#f2f3ef; --panel:#fbfbf8; --ink:#1c2321; --muted:#5b6662; --line:#cdd3cd;
+  --sea:#c3d3da; --sea-ink:#4d6b78; --land:#e2e4da; --coast:#8f9c95; --river:#6f9aad; --grat:rgba(60,80,90,.10);
+  --philip:#2c7a52; --saul:#b1372b; --peter:#b5740b; --on-badge:#ffffff; --accent:#2b5568;
+  --f-display:"Marcellus","Trajan Pro","Palatino Linotype",Georgia,serif;
+  --f-body:"Literata",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#131817; --panel:#191f1e; --ink:#e3e8e4; --muted:#9aa6a1; --line:#313a38;
+  --sea:#17252d; --sea-ink:#7fa3b3; --land:#252b29; --coast:#56645e; --river:#3f6a7c; --grat:rgba(180,200,210,.07);
+  --philip:#62c290; --saul:#ef7465; --peter:#e8aa45; --on-badge:#101514; --accent:#8db8cb; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#131817; --panel:#191f1e; --ink:#e3e8e4; --muted:#9aa6a1; --line:#313a38;
+  --sea:#17252d; --sea-ink:#7fa3b3; --land:#252b29; --coast:#56645e; --river:#3f6a7c; --grat:rgba(180,200,210,.07);
+  --philip:#62c290; --saul:#ef7465; --peter:#e8aa45; --on-badge:#101514; --accent:#8db8cb; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;padding-block:14px 12px}
+.top h1{font-family:var(--f-display);font-weight:400;font-size:26px;letter-spacing:.02em;margin:0;text-wrap:balance}
+.top p{margin:0;color:var(--muted);font-size:14px}
+
+.app{display:flex;flex-direction:column;gap:16px;padding-block:0 20px}
+.maps{position:relative;display:flex;gap:8px;height:74vh;min-height:460px}
+.pane{position:relative;flex:1 1 0;min-width:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--sea)}
+#paneInset{flex:0 0 44%;max-width:440px}
+.pane svg{display:block;width:100%;height:100%;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.pane svg.drag{cursor:grabbing}
+.pane-bar{position:absolute;inset:6px 6px auto 6px;display:flex;justify-content:space-between;align-items:flex-start;gap:6px;pointer-events:none}
+.pane-title{pointer-events:auto;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:2px 8px;font-family:var(--f-display);font-size:12.5px;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.zoom{pointer-events:auto;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden;flex:none}
+.zoom button{width:30px;height:28px;border:0;background:none;cursor:pointer;font-family:var(--f-mono);font-size:15px;line-height:1}
+.zoom button+button{border-top:1px solid var(--line)}
+.zoom button:hover{background:var(--bg)}
+
+/* map svg classes */
+.sea{fill:var(--sea)} .land{fill:var(--land);stroke:var(--coast);stroke-width:1}
+.water{fill:var(--sea);stroke:var(--coast);stroke-width:.8} .river{fill:none;stroke:var(--river);stroke-width:1.3;stroke-linejoin:round}
+.grat{stroke:var(--grat);stroke-width:1;fill:none}
+.rg{font-family:var(--f-display);fill:var(--muted);letter-spacing:.24em;opacity:.85}
+.rgsub{font-family:var(--f-body);font-style:italic;fill:var(--muted);opacity:.85}
+.sealbl{font-family:var(--f-body);font-style:italic;fill:var(--sea-ink);letter-spacing:.06em}
+.riv{font-family:var(--f-body);font-style:italic;fill:var(--sea-ink)}
+.halo{paint-order:stroke;stroke:var(--land);stroke-linejoin:round}
+.plbl{font-family:var(--f-display);fill:var(--ink)}
+.plbl.faint,.pdot.faint{opacity:.35}
+.reflbl{font-family:var(--f-body);fill:var(--muted)}
+.refpt{fill:var(--muted)}
+.pdot{fill:var(--ink);stroke:var(--land)}
+.approx{fill:none;stroke:var(--ink);opacity:.6}
+.rt{fill:none;stroke-linecap:round} .rt-halo{fill:none;stroke:var(--land);stroke-linecap:round;opacity:.75}
+.s-philip{stroke:var(--philip)} .s-saul{stroke:var(--saul)} .s-peter{stroke:var(--peter)}
+.c-philip{fill:var(--philip)} .c-saul{fill:var(--saul)} .c-peter{fill:var(--peter)}
+.zone{fill:var(--saul);fill-opacity:.07;stroke:var(--saul);stroke-opacity:.6}
+.locator{fill:var(--accent);fill-opacity:.05;stroke:var(--accent)}
+.bd{cursor:pointer} .bd-c{stroke:var(--land)}
+.bd-t{font-family:var(--f-mono);font-weight:600;fill:var(--on-badge);text-anchor:middle;pointer-events:none}
+.bd:hover .bd-c{stroke:var(--ink)}
+.selring{fill:none;stroke:var(--ink)}
+.sb-plate{fill:var(--panel);fill-opacity:.88;stroke:var(--line)}
+.sb-a{fill:var(--ink)} .sb-b{fill:var(--panel);stroke:var(--ink)}
+.sb-t{font-family:var(--f-mono);fill:var(--ink)}
+.na{fill:var(--ink)} .na-t{font-family:var(--f-display);fill:var(--ink);text-anchor:middle}
+
+/* popup */
+.pop{position:absolute;top:0;left:0;width:min(270px, calc(100% - 16px));background:var(--panel);border:1px solid var(--line);border-radius:6px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);padding:10px 12px 10px;z-index:5;font-size:13.5px;line-height:1.45}
+.pop-x{position:absolute;top:4px;right:4px;width:26px;height:26px;border:0;background:none;cursor:pointer;font-size:18px;color:var(--muted)}
+.pop-h{display:flex;align-items:center;gap:8px;padding-right:22px}
+.pop-h b{font-family:var(--f-display);font-weight:400;font-size:16px}
+.pop-who{color:var(--muted);font-size:12.5px}
+.pop-meta{display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:4px;font-family:var(--f-mono);font-size:12px}
+.pop-meta a{color:var(--accent)}
+.pop p{margin:6px 0 0}
+.pop .pop-n{color:var(--muted);font-size:12.5px;font-style:italic}
+.pop-nav{display:flex;justify-content:space-between;align-items:center;margin-top:8px;border-top:1px solid var(--line);padding-top:6px;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pop-nav button{border:1px solid var(--line);background:var(--bg);border-radius:4px;padding:2px 8px;cursor:pointer;font-size:12px}
+.pop-nav button:disabled{opacity:.35;cursor:default}
+
+/* badges in HTML */
+.bdg{display:inline-grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;font-family:var(--f-mono);font-weight:600;font-size:12px;color:var(--on-badge)}
+.bdg.philip{background:var(--philip)} .bdg.saul{background:var(--saul)} .bdg.peter{background:var(--peter)}
+
+/* panel */
+.panel{display:flex;flex-direction:column;gap:18px;min-width:0}
+.sec h2{font-family:var(--f-display);font-weight:400;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px}
+
+.tl-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tl-year{font-family:var(--f-display);font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
+.tl-year small{font-family:var(--f-body);font-size:13px;color:var(--muted);margin-left:6px}
+.btn{border:1px solid var(--line);background:var(--bg);border-radius:4px;padding:5px 12px;cursor:pointer;font-size:13.5px}
+.btn:hover{border-color:var(--muted)}
+.tl-track{position:relative;height:34px;margin:12px 9px 2px}
+.tl-track .row{position:absolute;left:0;right:0;height:1px;background:var(--line)}
+.tdot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:0;padding:0;cursor:pointer}
+.tdot.philip,.tbar.philip{background:var(--philip)} .tdot.saul,.tbar.saul{background:var(--saul)} .tdot.peter,.tbar.peter{background:var(--peter)}
+.tdot.future,.tbar.future{opacity:.28} .tdot.off,.tbar.off{opacity:.08;pointer-events:none}
+.tdot.sel{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--ink)}
+.tbar{position:absolute;height:4px;margin-top:-2px;border-radius:2px;opacity:.55}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:18px;background:none;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent) var(--p,100%),var(--line) var(--p,100%))}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent) var(--p,100%),var(--line) var(--p,100%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-7px;border-radius:50%;background:var(--panel);border:2px solid var(--accent)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--accent)}
+.tl-ticks{position:relative;height:16px;margin:2px 9px 0;font-family:var(--f-mono);font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tl-ticks span{position:absolute;transform:translateX(-50%)}
+.tl-latest{margin:10px 0 0;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;min-height:22px}
+
+.who-list{display:flex;flex-direction:column;gap:6px}
+.who{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 10px;cursor:pointer}
+.who .sw{width:26px;height:4px;border-radius:2px;flex:none}
+.sw.philip{background:var(--philip)} .sw.saul{background:var(--saul)} .sw.peter{background:var(--peter)}
+.who-txt{flex:1;min-width:0;display:flex;flex-direction:column}
+.who-txt b{font-family:var(--f-display);font-weight:400;font-size:16px}
+.who-txt small{color:var(--muted);font-family:var(--f-mono);font-size:11.5px}
+.who-state{font-size:12px;font-family:var(--f-mono);border:1px solid var(--line);border-radius:10px;padding:1px 8px;color:var(--muted)}
+.who[aria-pressed="false"]{opacity:.55}
+.who[aria-pressed="false"] .sw{background:var(--line)}
+.sym{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 12px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+.sym div{display:flex;align-items:center;gap:8px}
+.sym svg{flex:none;color:var(--ink)}
+
+.stops{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.stop{display:flex;gap:10px;width:100%;text-align:left;border:0;background:none;border-radius:6px;padding:8px;cursor:pointer;align-items:flex-start}
+.stop:hover{background:var(--panel)}
+.stop.sel{background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
+.stop.future{opacity:.42}
+.stop-b{display:flex;flex-direction:column;min-width:0}
+.stop-h{display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline}
+.stop-h b{font-family:var(--f-display);font-weight:400;font-size:15.5px}
+.stop-h span{color:var(--muted);font-size:12.5px}
+.stop-m{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.stop-t{font-size:13.5px}
+.notes{font-size:13px;color:var(--muted);max-width:65ch}
+.notes p{margin:0 0 8px}
+
+@media (min-width:900px){
+  html,body{height:100%}
+  body{display:flex;flex-direction:column;overflow:hidden}
+  .app{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px}
+  .maps{height:100%;min-height:0}
+  .panel{overflow-y:auto;padding-right:4px}
+}
+@media (max-width:520px){ .top h1{font-size:22px} #paneInset{flex-basis:46%} }
+</style>
+
+<a class="back" href="../index.html" style="margin:14px 0 -8px;align-self:flex-start">← All maps</a>
+<header class="top">
+  <h1>Acts 8–11 Journeys</h1>
+  <p>Philip, Saul, and Peter across Judea, Samaria, Syria, and Cilicia, c. AD 33–47</p>
+</header>
+
+<main class="app">
+  <section class="maps" id="maps" aria-label="Maps">
+    <div class="pane" id="paneMain">
+      <svg id="svgMain" role="img" aria-label="Map of the full region with routes"></svg>
+      <div class="pane-bar"><span class="pane-title">Full region</span>
+        <div class="zoom"><button data-v="main" data-act="in" aria-label="Zoom in">+</button><button data-v="main" data-act="out" aria-label="Zoom out">−</button><button data-v="main" data-act="home" aria-label="Reset view">⟲</button></div></div>
+    </div>
+    <div class="pane" id="paneInset">
+      <svg id="svgInset" role="img" aria-label="Detail map of Judea and Samaria"></svg>
+      <div class="pane-bar"><span class="pane-title">Judea &amp; Samaria</span>
+        <div class="zoom"><button data-v="inset" data-act="in" aria-label="Zoom in">+</button><button data-v="inset" data-act="out" aria-label="Zoom out">−</button><button data-v="inset" data-act="home" aria-label="Reset view">⟲</button></div></div>
+    </div>
+    <div class="pop" id="pop" hidden role="dialog" aria-live="polite"></div>
+  </section>
+
+  <aside class="panel">
+    <section class="sec">
+      <h2>Timeline</h2>
+      <div class="box">
+        <div class="tl-head">
+          <div class="tl-year" id="yearOut">AD 47</div>
+          <button class="btn" id="play" type="button">Play</button>
+        </div>
+        <div class="tl-track" id="tlTrack"></div>
+        <input type="range" id="year" min="33" max="47" step="0.05" value="47" aria-label="Year">
+        <div class="tl-ticks" id="tlTicks"></div>
+        <p class="tl-latest" id="latest"></p>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>Routes &amp; legend</h2>
+      <div class="who-list" id="whoList"></div>
+      <div class="sym">
+        <div><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="var(--saul)"/><text x="11" y="14.5" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600" fill="var(--on-badge)">3</text></svg>Numbered step</div>
+        <div><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="3.5" fill="currentColor"/></svg>Stop on a route</div>
+        <div><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-dasharray="2.5 2"/><circle cx="11" cy="11" r="3" fill="currentColor"/></svg>Approximate location</div>
+        <div><svg width="22" height="22" viewBox="0 0 22 22"><path d="M2 11h18" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/></svg>By sea or uncertain path</div>
+        <div><svg width="22" height="22" viewBox="0 0 22 22"><rect x="8.5" y="8.5" width="5" height="5" fill="var(--muted)"/></svg>Other town, for reference</div>
+        <div><svg width="22" height="22" viewBox="0 0 22 22"><path d="M2 11h11" stroke="currentColor" stroke-width="2"/><path d="M19 11l-6 -4v8z" fill="currentColor"/></svg>Direction of travel</div>
+        <div><svg width="22" height="22" viewBox="0 0 22 22"><rect x="2" y="5" width="18" height="12" fill="none" stroke="var(--accent)" stroke-dasharray="3 2"/></svg>Area in detail pane</div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>Stops in order</h2>
+      <ol class="stops" id="stops"></ol>
+    </section>
+
+    <section class="sec notes">
+      <h2>About this map</h2>
+      <p>Dates are rough. They assume Saul's conversion about AD 34, with Galatians' "after three years" counted from it; scholars place the conversion anywhere from about AD 31 to 36. Peter's tour has no fixed date beyond following the peace of Acts 9:31.</p>
+      <p>Dashed rings mark places whose exact site is unknown: the baptism on the Gaza road, the Damascus road vision, Saul's stay in Arabia, and his years in Syria and Cilicia. Saul's next step, being brought from Tarsus to Antioch (Acts 11:25–26), falls just outside these passages.</p>
+      <p>Drag to pan, scroll or pinch to zoom. Verse links open the ESV on Bible Gateway.</p>
+    </section>
+  </aside>
+</main>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const SX=149, SY=180, KMU=111.32/SY, DENSE=1.2;
+const U=(lat,lon)=>[(lon-33.9)*SX,(37.35-lat)*SY];
+const f=n=>(+n).toFixed(2);
+
+const PEOPLE={
+  philip:{name:'Philip',bend:0.16,refs:'Acts 8:1–40'},
+  saul:{name:'Saul',bend:-0.16,refs:'Acts 9:1–31 · Gal 1:17–24'},
+  peter:{name:'Peter',bend:-0.2,refs:'Acts 9:32–11:18'}
+};
+const ORDER=['philip','saul','peter'];
+
+const PL={
+  jerusalem:{name:'Jerusalem',lat:31.778,lon:35.235,a:0,lab:[-10,4,'end'],core:1},
+  samaria:{name:'Samaria',lat:32.276,lon:35.195,a:90,lab:[0,-10,'middle'],core:1,note:'Likely Sebaste, Herod’s city on the site of ancient Samaria. Some manuscripts read “a city of Samaria.”'},
+  caesarea:{name:'Caesarea',lat:32.50,lon:34.892,a:180,lab:[9,4,'start'],core:1,note:'Caesarea Maritima, Herod’s harbor and the Roman seat of government for Judea.'},
+  joppa:{name:'Joppa',lat:32.054,lon:34.752,a:180,lab:[8,-6,'start'],core:1,note:'Modern Jaffa, the port of Jerusalem.'},
+  lydda:{name:'Lydda',lat:31.951,lon:34.888,a:90,lab:[8,4,'start'],core:1,note:'Modern Lod, about a day’s walk from Jerusalem toward the coast.'},
+  azotus:{name:'Azotus',lat:31.755,lon:34.668,a:180,lab:[8,4,'start'],core:1,note:'Old Philistine Ashdod.'},
+  desert:{name:'Road to Gaza',lat:31.62,lon:34.90,a:90,lab:[9,4,'start'],core:1,approx:1,note:'The site of the baptism is unknown; the marker sits on the road from Jerusalem down toward Gaza.'},
+  damascus:{name:'Damascus',lat:33.513,lon:36.292,a:0,lab:[0,-11,'middle'],note:'Straight Street still runs east–west through the old city.'},
+  road:{name:'Road to Damascus',lat:33.40,lon:36.10,a:180,lab:[0,18,'middle'],approx:1,note:'Approximate. Tradition places the vision near Kawkab, southwest of Damascus.'},
+  arabia:{name:'Arabia',lat:32.35,lon:36.75,a:0,lab:[0,19,'middle'],approx:1,note:'Probably the Nabataean kingdom south and east of Damascus; the exact area is unknown.'},
+  tarsus:{name:'Tarsus',lat:36.918,lon:34.895,a:270,lab:[9,4,'start'],note:'Saul’s birthplace (Acts 22:3), a leading city of Cilicia.'},
+  syriacilicia:{name:'Syria & Cilicia',lat:36.98,lon:35.70,a:270,lab:[9,4,'start'],approx:1,note:'A whole region, not one town. The shaded oval covers Cilicia and northern Syria.'}
+};
+
+const STEPS=[
+ {who:'philip',n:1,place:'jerusalem',ref:'Acts 8:1–4',date:'c. AD 34',y:33.9,text:'Persecution after Stephen’s death scatters the church, and Philip goes out with the others preaching the word.'},
+ {who:'philip',n:2,place:'samaria',ref:'Acts 8:5–8',date:'c. AD 34',y:34.1,text:'Philip proclaims Christ in the city of Samaria; crowds see healings and the city is filled with joy.'},
+ {who:'philip',n:3,place:'samaria',ref:'Acts 8:9–13',date:'c. AD 34',y:34.2,text:'Simon the magician, long revered in Samaria, believes, is baptized, and follows Philip.'},
+ {who:'philip',n:4,place:'samaria',ref:'Acts 8:14–25',date:'c. AD 34',y:34.35,text:'Peter and John come from Jerusalem; the Samaritans receive the Spirit and Peter rebukes Simon for trying to buy it.'},
+ {who:'saul',n:1,place:'jerusalem',ref:'Acts 9:1–2',date:'c. AD 34',y:34.4,text:'Still breathing threats, Saul asks the high priest for letters to arrest followers of the Way in Damascus.'},
+ {who:'saul',n:2,place:'road',ref:'Acts 9:3–9',date:'c. AD 34',y:34.5,text:'A light from heaven flashes, Jesus speaks to him, and Saul is led into the city blind for three days.'},
+ {who:'saul',n:3,place:'damascus',ref:'Acts 9:10–19',date:'c. AD 34',y:34.55,text:'Ananias lays hands on him in Judas’s house on Straight Street; Saul sees again and is baptized.'},
+ {who:'philip',n:5,place:'desert',ref:'Acts 8:26–39',date:'c. AD 34–35',y:34.6,text:'An angel sends Philip south, where he explains Isaiah 53 to an Ethiopian court official and baptizes him.'},
+ {who:'philip',n:6,place:'azotus',ref:'Acts 8:40',date:'c. AD 35',y:34.7,text:'The Spirit carries Philip away, and he turns up at Azotus.'},
+ {who:'philip',n:7,place:'caesarea',ref:'Acts 8:40',date:'c. AD 35',y:34.9,text:'Preaching in every coastal town, he reaches Caesarea, where he is still living years later (Acts 21:8).'},
+ {who:'saul',n:4,place:'arabia',ref:'Galatians 1:17',date:'c. AD 35–36',y:35.0,text:'Without consulting anyone, Saul goes away into Arabia.'},
+ {who:'saul',n:5,place:'damascus',ref:'Acts 9:19–25; Galatians 1:17',date:'c. AD 36–37',y:36.4,text:'Back in Damascus he proves Jesus is the Christ; when a plot forms, disciples lower him through the wall in a basket.'},
+ {who:'saul',n:6,place:'jerusalem',ref:'Acts 9:26–29; Galatians 1:18–20',date:'c. AD 37',y:37.0,text:'Barnabas vouches for him. He stays fifteen days with Cephas, sees James, and debates the Hellenists.'},
+ {who:'saul',n:7,place:'caesarea',ref:'Acts 9:30',date:'c. AD 37',y:37.1,text:'When the Hellenists try to kill him, the believers bring him down to Caesarea.'},
+ {who:'saul',n:8,place:'tarsus',ref:'Acts 9:30',date:'c. AD 37',y:37.25,sea:1,text:'From Caesarea they send him off to his home city of Tarsus.'},
+ {who:'saul',n:9,place:'syriacilicia',ref:'Galatians 1:21–24; Acts 9:31',date:'c. AD 37–45',y:38.0,yEnd:45,dash:1,text:'Years of preaching in Syria and Cilicia; the Judean churches hear that their former persecutor now preaches the faith.'},
+ {who:'peter',n:1,place:'jerusalem',ref:'Acts 9:31–32',date:'c. AD 38–39',y:38.6,text:'With the churches at peace, Peter sets out to visit the believers in every region.'},
+ {who:'peter',n:2,place:'lydda',ref:'Acts 9:32–35',date:'c. AD 39',y:39.0,text:'Peter heals Aeneas, bedridden for eight years, and the people of Lydda and Sharon turn to the Lord.'},
+ {who:'peter',n:3,place:'joppa',ref:'Acts 9:36–43',date:'c. AD 39',y:39.25,text:'Called from Lydda, Peter raises Tabitha (Dorcas) and stays on with Simon the tanner.'},
+ {who:'peter',n:4,place:'joppa',ref:'Acts 10:1–23',date:'c. AD 40',y:39.8,text:'As Cornelius’s men come from Caesarea, Peter sees the sheet of unclean animals in a rooftop vision.'},
+ {who:'peter',n:5,place:'caesarea',ref:'Acts 10:24–48',date:'c. AD 40',y:39.95,text:'In Cornelius’s house the Spirit falls on the Gentiles, and Peter has them baptized.'},
+ {who:'peter',n:6,place:'jerusalem',ref:'Acts 11:1–18',date:'c. AD 40',y:40.2,text:'Peter answers his critics; the church concludes that God has granted the Gentiles repentance that leads to life.'}
+];
+STEPS.forEach(s=>s.id=s.who+'-'+s.n);
+const byId=Object.fromEntries(STEPS.map(s=>[s.id,s]));
+const COUNT=Object.fromEntries(ORDER.map(w=>[w,STEPS.filter(s=>s.who===w).length]));
+
+/* ---- geography ---- */
+const COAST=[[31.25,30.0],[31.2,31.5],[31.05,32.3],[31.12,33.0],[31.15,33.8],[31.32,34.22],[31.52,34.43],[31.68,34.55],[31.80,34.62],[32.05,34.745],[32.32,34.85],[32.50,34.885],[32.72,34.95],[32.83,34.97],[32.80,35.05],[32.92,35.075],[33.09,35.10],[33.27,35.195],[33.56,35.37],[33.90,35.48],[34.12,35.64],[34.44,35.82],[34.62,35.97],[34.89,35.88],[35.15,35.93],[35.52,35.77],[35.70,35.80],[35.95,35.92],[36.05,35.93],[36.20,35.85],[36.41,35.88],[36.59,36.17],[36.85,36.20],[36.77,35.79],[36.56,35.37],[36.70,35.00],[36.80,34.63],[36.60,34.30],[36.40,33.95],[36.15,33.55],[36.10,32.90],[36.25,32.30],[36.45,31.50],[36.60,30.60],[36.55,30.0]];
+const LAND=[[26,30],...COAST,[40,30],[40,40],[26,40]];
+const CYPRUS=[[35.05,32.27],[35.17,32.9],[35.34,33.32],[35.35,33.9],[35.70,34.59],[35.45,34.1],[35.12,33.94],[34.96,34.08],[34.90,33.63],[34.67,33.04],[34.75,32.4]];
+const DEADSEA=[[31.76,35.50],[31.76,35.56],[31.5,35.58],[31.2,35.55],[31.05,35.47],[31.25,35.40],[31.5,35.45]];
+const GALILEE=[[32.90,35.58],[32.86,35.64],[32.78,35.65],[32.71,35.60],[32.74,35.54],[32.83,35.52]];
+const JORDAN=[[33.25,35.62],[33.05,35.61],[32.90,35.60],[32.71,35.57],[32.4,35.56],[32.1,35.53],[31.85,35.55],[31.76,35.54]];
+const ORONTES=[[34.05,36.35],[34.45,36.55],[34.73,36.71],[35.13,36.75],[35.6,36.35],[36.0,36.35],[36.2,36.30],[36.2,36.16],[36.10,36.02],[36.05,35.93]];
+const pth=(pts,close)=>pts.map((p,i)=>{const [x,y]=U(p[0],p[1]);return (i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)}).join('')+(close?'Z':'');
+let grat='';
+for(let la=31;la<=37;la++){const a=U(la,30),b=U(la,40);grat+=`M${f(a[0])} ${f(a[1])}H${f(b[0])}`}
+for(let lo=34;lo<=37;lo++){const a=U(40,lo),b=U(26,lo);grat+=`M${f(a[0])} ${f(a[1])}V${f(b[1])}`}
+const NS='vector-effect="non-scaling-stroke"';
+const BASE=`<rect class="sea" x="-3000" y="-3000" width="8000" height="8000"/>
+<path class="grat" ${NS} d="${grat}"/>
+<path class="land" ${NS} d="${pth(LAND,1)}"/><path class="land" ${NS} d="${pth(CYPRUS,1)}"/>
+<path class="water" ${NS} d="${pth(DEADSEA,1)}"/><path class="water" ${NS} d="${pth(GALILEE,1)}"/>
+<path class="river" ${NS} d="${pth(JORDAN)}"/><path class="river" ${NS} d="${pth(ORONTES)}"/>`;
+
+// [text, lat, lon, class, size, dy, maxK]
+const LABELS=[
+ ['CILICIA',37.17,35.35,'rg',13],['SYRIA',35.05,36.95,'rg',13],['PHOENICIA',33.72,35.68,'rg',9.5],
+ ['GALILEE',32.98,35.40,'rg',9.5],['SAMARIA',32.43,35.34,'rg',9.5],['JUDEA',31.30,35.12,'rg',9.5],
+ ['DECAPOLIS',32.55,35.98,'rg',9.5],['ARABIA',31.62,36.62,'rg',12],['Nabataean kingdom',31.62,36.62,'rgsub',9.5,14],
+ ['Plain of Sharon',32.30,34.99,'rgsub',9,0,0.8],
+ ['Mediterranean Sea',34.25,34.55,'sealbl',12],['The Great Sea',34.25,34.55,'sealbl',9.5,14],
+ ['Cyprus',35.18,33.30,'sealbl',11],['Gulf of Issus',36.62,35.98,'sealbl',9,0,1.0],
+ ['Orontes',35.45,36.50,'riv',9],['Jordan',32.25,35.67,'riv',9,0,1.3],['Dead Sea',31.36,35.70,'riv',8.5,0,0.9]
+];
+const REFS=[['Gaza',31.50,34.46,1],['Ptolemais',32.925,35.09],['Tyre',33.272,35.21],['Sidon',33.56,35.385],['Antioch',36.20,36.16]];
+
+/* ---- state ---- */
+const state={t:47,on:{philip:true,saul:true,peter:true},sel:null,popView:'main'};
+const vis=s=>state.on[s.who]&&s.y<=state.t+1e-6;
+
+/* ---- views ---- */
+class View{
+  constructor(name,id,home,isMain){
+    this.name=name;this.svg=document.getElementById(id);this.home=home;this.isMain=isMain;this.vb=null;this.cw=1;this.ch=1;this.badgePos={};
+    this.svg.innerHTML=BASE+'<g class="ov"></g>';this.ov=this.svg.querySelector('.ov');
+    new ResizeObserver(()=>this.resize()).observe(this.svg);bindPointer(this);
+  }
+  get k(){return this.vb?this.vb.w/this.cw:1}
+  resize(){const r=this.svg.getBoundingClientRect();if(!r.width||!r.height)return;
+    if(!this.vb){this.cw=r.width;this.ch=r.height;this.fit(this.home);return}
+    const k=this.k,cx=this.vb.x+this.vb.w/2,cy=this.vb.y+this.vb.h/2;this.cw=r.width;this.ch=r.height;
+    const w=k*this.cw,h=k*this.ch;this.vb={x:cx-w/2,y:cy-h/2,w,h};this.apply()}
+  fit(b){const [x0,y0]=U(b.n,b.w),[x1,y1]=U(b.s,b.e);const bw=(x1-x0)*1.06,bh=(y1-y0)*1.06,asp=this.cw/this.ch;
+    const w=Math.max(bw,bh*asp),h=w/asp;this.vb={x:(x0+x1)/2-w/2,y:(y0+y1)/2-h/2,w,h};this.apply()}
+  zoomAt(fac,ux,uy){const w=Math.min(1300,Math.max(45,this.vb.w*fac)),s=w/this.vb.w,h=w*this.ch/this.cw;
+    this.vb={x:ux-(ux-this.vb.x)*s,y:uy-(uy-this.vb.y)*s,w,h};this.apply()}
+  toUnits(cx,cy){const r=this.svg.getBoundingClientRect();return [this.vb.x+(cx-r.left)/this.cw*this.vb.w,this.vb.y+(cy-r.top)/this.ch*this.vb.h]}
+  apply(){this.svg.setAttribute('viewBox',`${f(this.vb.x)} ${f(this.vb.y)} ${f(this.vb.w)} ${f(this.vb.h)}`);schedule()}
+}
+function bindPointer(v){
+  const svg=v.svg,pts=new Map();let start=null,moved=false,pinch=null;
+  const mid=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2}),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+  svg.addEventListener('pointerdown',e=>{
+    if(e.button>0)return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pts.size===1){const t=e.target.closest&&e.target.closest('[data-step]');start={x:e.clientX,y:e.clientY,vb:{...v.vb},step:t?t.getAttribute('data-step'):null};moved=false}
+    else if(pts.size===2){const [a,b]=[...pts.values()];const m=mid(a,b);pinch={d:dist(a,b),vb:{...v.vb},u:v.toUnits(m.x,m.y)};moved=true;try{svg.setPointerCapture(e.pointerId)}catch(_){}}
+  });
+  svg.addEventListener('pointermove',e=>{
+    if(!pts.has(e.pointerId))return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pts.size===1&&start){const dx=e.clientX-start.x,dy=e.clientY-start.y;
+      if(!moved&&Math.hypot(dx,dy)>5){moved=true;try{svg.setPointerCapture(e.pointerId)}catch(_){}svg.classList.add('drag')}
+      if(moved){const k=start.vb.w/v.cw;v.vb={...start.vb,x:start.vb.x-dx*k,y:start.vb.y-dy*k};v.apply()}}
+    else if(pts.size===2&&pinch){const [a,b]=[...pts.values()];const d=dist(a,b)||1;const w=Math.min(1300,Math.max(45,pinch.vb.w*pinch.d/d)),h=w*v.ch/v.cw;
+      const m=mid(a,b),r=svg.getBoundingClientRect();v.vb={w,h,x:pinch.u[0]-(m.x-r.left)/v.cw*w,y:pinch.u[1]-(m.y-r.top)/v.ch*h};v.apply()}
+  });
+  const end=e=>{if(!pts.has(e.pointerId))return;pts.delete(e.pointerId);
+    if(pts.size===0){if(!moved&&start&&e.type==='pointerup'){if(start.step)select(start.step,v.name);else if(state.sel)closePop()}
+      start=null;pinch=null;svg.classList.remove('drag')}
+    else if(pts.size===1){pinch=null;const p=[...pts.values()][0];start={x:p.x,y:p.y,vb:{...v.vb}};moved=true}};
+  svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',end);
+  svg.addEventListener('wheel',e=>{e.preventDefault();const [ux,uy]=v.toUnits(e.clientX,e.clientY);v.zoomAt(Math.exp(e.deltaY*0.0016),ux,uy)},{passive:false});
+}
+
+/* ---- map drawing ---- */
+function curve(a,b,bend){const [x0,y0]=U(a.lat,a.lon),[x2,y2]=U(b.lat,b.lon);const dx=x2-x0,dy=y2-y0,L=Math.hypot(dx,dy)||1;
+  const cx=(x0+x2)/2+(-dy/L)*L*bend,cy=(y0+y2)/2+(dx/L)*L*bend;return {x0,y0,cx,cy,x2,y2}}
+function badgeLayout(p,n){const a0=p.a*Math.PI/180;if(n===1)return [[a0,15]];const sp=(n===2?70:50)*Math.PI/180;
+  const R=Math.max(15,18.5/(2*Math.sin(sp/2)));return Array.from({length:n},(_,i)=>[a0+(i-(n-1)/2)*sp,R])}
+const nice=(target,arr)=>{let best=arr[0];for(const a of arr)if(a<=target)best=a;return best};
+
+function render(v){
+  if(!v.vb)return;const k=v.k,vb=v.vb,o=[],dense=k>DENSE;v.badgePos={};
+  for(const L of LABELS){if(L[6]&&k>L[6])continue;const [x,y]=U(L[1],L[2]);
+    o.push(`<text class="${L[3]}" x="${f(x)}" y="${f(y+(L[5]||0)*k)}" font-size="${f(L[4]*k)}" text-anchor="middle">${L[0]}</text>`)}
+  for(const r of REFS){if(dense&&r[3])continue;const [x,y]=U(r[1],r[2]),s=4*k;
+    o.push(`<rect class="refpt" x="${f(x-s/2)}" y="${f(y-s/2)}" width="${f(s)}" height="${f(s)}"/><text class="reflbl halo" x="${f(x+6*k)}" y="${f(y+3.2*k)}" font-size="${f(9.5*k)}" stroke-width="${f(2.6*k)}">${r[0]}</text>`)}
+  if(v.isMain&&views.inset.vb&&views.inset.vb.w<vb.w*0.75){const q=views.inset.vb;
+    o.push(`<rect class="locator" x="${f(q.x)}" y="${f(q.y)}" width="${f(q.w)}" height="${f(q.h)}" stroke-width="${f(1.3*k)}" stroke-dasharray="${f(5*k)} ${f(3*k)}"/>`)}
+  if(vis(byId['saul-9'])){const [x,y]=U(36.62,35.62);o.push(`<ellipse class="zone" cx="${f(x)}" cy="${f(y)}" rx="192" ry="98" stroke-width="${f(1.2*k)}" stroke-dasharray="${f(5*k)} ${f(4*k)}"/>`)}
+  // routes
+  const legs=[];
+  for(const who of ORDER){if(!state.on[who])continue;const seq=STEPS.filter(s=>s.who===who&&vis(s)).sort((a,b)=>a.n-b.n);
+    for(let i=1;i<seq.length;i++){const a=PL[seq[i-1].place],b=PL[seq[i].place];if(a===b)continue;legs.push({who,s:seq[i],c:curve(a,b,PEOPLE[who].bend)})}}
+  for(const L of legs){const c=L.c;o.push(`<path class="rt-halo" d="M${f(c.x0)} ${f(c.y0)}Q${f(c.cx)} ${f(c.cy)} ${f(c.x2)} ${f(c.y2)}" stroke-width="${f(5.5*k)}"/>`)}
+  for(const L of legs){const c=L.c,sel=L.s.id===state.sel,w=(sel?3.8:2.4)*k,dash=(L.s.sea||L.s.dash)?` stroke-dasharray="${f(6*k)} ${f(4.5*k)}"`:'';
+    o.push(`<path class="rt s-${L.who}" d="M${f(c.x0)} ${f(c.y0)}Q${f(c.cx)} ${f(c.cy)} ${f(c.x2)} ${f(c.y2)}" stroke-width="${f(w)}"${dash}/>`);
+    const t=.55,mt=1-t,px=mt*mt*c.x0+2*mt*t*c.cx+t*t*c.x2,py=mt*mt*c.y0+2*mt*t*c.cy+t*t*c.y2;
+    let tx=2*mt*(c.cx-c.x0)+2*t*(c.x2-c.cx),ty=2*mt*(c.cy-c.y0)+2*t*(c.y2-c.cy);const tl=Math.hypot(tx,ty)||1;tx/=tl;ty/=tl;
+    const len=(sel?8:6.5)*k,hw=(sel?5.5:4.5)*k,bx=px-tx*len,by=py-ty*len;
+    o.push(`<path class="c-${L.who}" d="M${f(px+tx*len*.4)} ${f(py+ty*len*.4)}L${f(bx-ty*hw)} ${f(by+tx*hw)}L${f(bx+ty*hw)} ${f(by-tx*hw)}Z"/>`)}
+  // places
+  const used={};for(const s of STEPS){if(!state.on[s.who])continue;(used[s.place]=used[s.place]||[]).push(s)}
+  const labels=[];
+  for(const id in used){const p=PL[id],list=used[id],shown=list.filter(vis),faint=shown.length?'':' faint';const [x,y]=U(p.lat,p.lon);
+    if(dense&&p.core){o.push(`<circle class="pdot${faint}" cx="${f(x)}" cy="${f(y)}" r="${f(2.6*k)}" stroke-width="${f(1*k)}"/>`);
+      if(id==='jerusalem')labels.push(`<text class="plbl halo${faint}" x="${f(x+7*k)}" y="${f(y+4*k)}" font-size="${f(11.5*k)}" stroke-width="${f(3*k)}">Jerusalem</text>`);continue}
+    if(p.approx)o.push(`<circle class="approx${faint}" cx="${f(x)}" cy="${f(y)}" r="${f(7*k)}" stroke-width="${f(1.2*k)}" stroke-dasharray="${f(2.5*k)} ${f(2*k)}"/>`);
+    o.push(`<circle class="pdot${faint}" cx="${f(x)}" cy="${f(y)}" r="${f(3.6*k)}" stroke-width="${f(1.3*k)}"/>`);
+    labels.push(`<text class="plbl halo${faint}" x="${f(x+p.lab[0]*k)}" y="${f(y+p.lab[1]*k)}" text-anchor="${p.lab[2]}" font-size="${f(11.5*k)}" stroke-width="${f(3*k)}">${p.name}</text>`);
+    const sh=shown.sort((a,b)=>a.y-b.y),lay=badgeLayout(p,sh.length);
+    sh.forEach((s,i)=>{const [ang,R]=lay[i],bx=x+Math.cos(ang)*R*k,by=y+Math.sin(ang)*R*k;v.badgePos[s.id]=[bx,by];
+      labels.push(`<g class="bd" data-step="${s.id}" transform="translate(${f(bx)} ${f(by)})"><title>${PEOPLE[s.who].name} ${s.n} · ${p.name} — ${s.ref}</title>`+
+        (s.id===state.sel?`<circle class="selring" r="${f(12.5*k)}" stroke-width="${f(2*k)}"/>`:'')+
+        `<circle class="bd-c c-${s.who}" r="${f(8.5*k)}" stroke-width="${f(1.6*k)}"/><text class="bd-t" y="${f(3.4*k)}" font-size="${f(9.5*k)}">${s.n}</text></g>`)})}
+  o.push(...labels);
+  // scale bar
+  const tgt=95*k*KMU,km=nice(tgt,[5,10,20,25,50,100,150,200,300,500]),mi=nice(tgt/1.609,[5,10,20,25,50,100,150,200,300]);
+  const Lk=km/KMU,Lm=mi*1.609/KMU,sx=vb.x+12*k,sy=vb.y+vb.h-12*k,bh=4.5*k;
+  o.push(`<rect class="sb-plate" x="${f(sx-6*k)}" y="${f(sy-38*k)}" width="${f(Math.max(Lk,Lm)+58*k)}" height="${f(44*k)}" rx="${f(4*k)}" stroke-width="${f(1*k)}"/>`);
+  const bar=(y,L)=>`<rect class="sb-a" x="${f(sx)}" y="${f(y)}" width="${f(L/2)}" height="${f(bh)}"/><rect class="sb-b" x="${f(sx+L/2)}" y="${f(y)}" width="${f(L/2)}" height="${f(bh)}" stroke-width="${f(.8*k)}"/>`;
+  o.push(bar(sy-28*k,Lk)+`<text class="sb-t" x="${f(sx+Lk+6*k)}" y="${f(sy-23.5*k)}" font-size="${f(10*k)}">${km} km</text>`);
+  o.push(bar(sy-12*k,Lm)+`<text class="sb-t" x="${f(sx+Lm+6*k)}" y="${f(sy-7.5*k)}" font-size="${f(10*k)}">${mi} mi</text>`);
+  if(v.isMain){const nx=vb.x+vb.w-23*k,ny=vb.y+112*k;
+    o.push(`<path class="na" d="M${f(nx)} ${f(ny-14*k)}L${f(nx+6*k)} ${f(ny+5*k)}L${f(nx)} ${f(ny+1*k)}L${f(nx-6*k)} ${f(ny+5*k)}Z"/><text class="na-t halo" x="${f(nx)}" y="${f(ny-18*k)}" font-size="${f(11*k)}" stroke-width="${f(3*k)}">N</text>`)}
+  v.ov.innerHTML=o.join('');
+}
+
+const views={};
+views.main=new View('main','svgMain',{s:31.25,n:37.32,w:33.95,e:37.3},true);
+views.inset=new View('inset','svgInset',{s:31.42,n:32.62,w:34.45,e:35.45},false);
+let queued=false;
+function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;render(views.main);render(views.inset);placePop()})}
+
+document.querySelectorAll('.zoom button').forEach(b=>b.addEventListener('click',()=>{const v=views[b.dataset.v];if(!v.vb)return;
+  if(b.dataset.act==='home'){v.fit(v.home);return}const cx=v.vb.x+v.vb.w/2,cy=v.vb.y+v.vb.h/2;v.zoomAt(b.dataset.act==='in'?1/1.5:1.5,cx,cy)}));
+
+/* ---- popup ---- */
+const pop=$('#pop');
+const gw=ref=>'https://www.biblegateway.com/passage/?search='+encodeURIComponent(ref.replace(/–/g,'-'))+'&version=ESV';
+function fillPop(){const s=byId[state.sel];if(!s)return;const p=PL[s.place],seq=STEPS.filter(x=>x.who===s.who);
+  pop.innerHTML=`<button class="pop-x" type="button" aria-label="Close">×</button>
+  <div class="pop-h"><span class="bdg ${s.who}">${s.n}</span><b>${p.name}</b><span class="pop-who">${PEOPLE[s.who].name}</span></div>
+  <div class="pop-meta"><a href="${gw(s.ref)}" target="_blank" rel="noopener">${s.ref}</a><span>${s.date}</span></div>
+  <p>${s.text}</p>${p.note?`<p class="pop-n">${p.note}</p>`:''}
+  <div class="pop-nav"><button type="button" data-nav="-1" ${s.n===1?'disabled':''}>‹ Prev</button><span>${s.n} of ${seq.length}</span><button type="button" data-nav="1" ${s.n===seq.length?'disabled':''}>Next ›</button></div>`}
+pop.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.classList.contains('pop-x')){closePop();return}
+  const d=+b.dataset.nav;if(d){const s=byId[state.sel],nx=byId[s.who+'-'+(s.n+d)];if(nx)select(nx.id)}});
+function placePop(){if(!state.sel){pop.hidden=true;return}const v=views[state.popView],pos=v.badgePos[state.sel];if(!pos||!v.vb){pop.hidden=true;return}
+  const r=v.svg.getBoundingClientRect(),mr=$('#maps').getBoundingClientRect();const sx=(pos[0]-v.vb.x)/v.k,sy=(pos[1]-v.vb.y)/v.k;
+  if(sx<0||sy<0||sx>r.width||sy>r.height){pop.hidden=true;return}
+  pop.hidden=false;const ax=r.left-mr.left+sx,ay=r.top-mr.top+sy,w=pop.offsetWidth,h=pop.offsetHeight;
+  let x=Math.min(Math.max(8,ax-w/2),mr.width-w-8),y=ay-h-16;if(y<8)y=ay+16;y=Math.min(Math.max(8,y),Math.max(8,mr.height-h-8));
+  pop.style.transform=`translate(${Math.round(x)}px,${Math.round(y)}px)`}
+function closePop(){state.sel=null;renderPanel();schedule()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.sel)closePop()});
+
+function pickView(s,pref){const p=PL[s.place];let v=pref?views[pref]:null;
+  if(v&&p.core&&v.k>DENSE)v=null;if(!v)v=p.core?views.inset:views.main;
+  if(v.k>DENSE&&p.core)v.fit(v.home);
+  const [ux,uy]=U(p.lat,p.lon),m=60*v.k;
+  if(ux<v.vb.x+m||ux>v.vb.x+v.vb.w-m||uy<v.vb.y+m+40*v.k||uy>v.vb.y+v.vb.h-m){v.vb={...v.vb,x:ux-v.vb.w/2,y:uy-v.vb.h/2};v.apply()}
+  return v.name}
+function select(id,from){const s=byId[id];if(!s)return;if(!state.on[s.who]){state.on[s.who]=true}
+  if(s.y>state.t)setYear(s.y,true);state.sel=id;state.popView=pickView(s,from);fillPop();renderPanel();schedule();
+  if(!from){const el=document.querySelector(`.stop[data-id="${id}"]`);if(el&&window.matchMedia('(min-width:900px)').matches)el.scrollIntoView({block:'nearest'})}}
+
+/* ---- panel ---- */
+const yr=$('#year'),yearOut=$('#yearOut'),track=$('#tlTrack');
+const pct=y=>((y-33)/14*100).toFixed(3)+'%';
+const ROW={philip:6,saul:17,peter:28};
+let th='';for(const w of ORDER)th+=`<div class="row" style="top:${ROW[w]}px"></div>`;
+for(const s of STEPS){if(s.yEnd)th+=`<span class="tbar ${s.who}" data-bar="${s.id}" style="left:${pct(s.y)};width:calc(${pct(s.yEnd)} - ${pct(s.y)});top:${ROW[s.who]}px"></span>`;
+  th+=`<button type="button" class="tdot ${s.who}" data-id="${s.id}" style="left:${pct(s.y)};top:${ROW[s.who]}px" aria-label="${PEOPLE[s.who].name} ${s.n}, ${PL[s.place].name}, ${s.date}" title="${PEOPLE[s.who].name} ${s.n} · ${PL[s.place].name} · ${s.date}"></button>`}
+track.innerHTML=th;
+track.addEventListener('click',e=>{const b=e.target.closest('.tdot');if(b){const s=byId[b.dataset.id];setYear(Math.max(state.t,s.y),true);select(s.id)}});
+let tk='';for(let y=33;y<=47;y+=2)tk+=`<span style="left:${pct(y)}">${y}</span>`;$('#tlTicks').innerHTML=tk;
+
+function setYear(t,quiet){state.t=Math.round(Math.min(47,Math.max(33,t))*100)/100;yr.value=state.t;yr.style.setProperty('--p',pct(state.t));
+  yearOut.innerHTML='AD '+Math.floor(state.t+1e-6)+(state.t>=46.99?'<small>all stops</small>':'');
+  if(state.sel&&!vis(byId[state.sel]))state.sel=null;if(!quiet){renderPanel();schedule()}}
+yr.addEventListener('input',()=>{stopPlay();setYear(+yr.value)});
+
+let playing=false,last=0;const playBtn=$('#play');
+function stopPlay(){playing=false;playBtn.textContent='Play'}
+function tick(ts){if(!playing)return;const dt=Math.min(.1,(ts-last)/1000);last=ts;const t=state.t+dt*1.1;
+  if(t>=47){setYear(47);stopPlay();return}setYear(t);requestAnimationFrame(tick)}
+playBtn.addEventListener('click',()=>{if(playing){stopPlay();return}if(state.t>=46.9)setYear(33);playing=true;playBtn.textContent='Pause';last=performance.now();requestAnimationFrame(tick)});
+
+const whoList=$('#whoList');
+whoList.innerHTML=ORDER.map(w=>`<button type="button" class="who" data-who="${w}" aria-pressed="true"><span class="sw ${w}"></span><span class="who-txt"><b>${PEOPLE[w].name}</b><small>${PEOPLE[w].refs} · ${COUNT[w]} stops</small></span><span class="who-state">Shown</span></button>`).join('');
+whoList.addEventListener('click',e=>{const b=e.target.closest('.who');if(!b)return;const w=b.dataset.who;state.on[w]=!state.on[w];
+  if(state.sel&&byId[state.sel].who===w&&!state.on[w])state.sel=null;renderPanel();schedule()});
+
+const stopsEl=$('#stops');
+stopsEl.addEventListener('click',e=>{const b=e.target.closest('.stop');if(b)select(b.dataset.id)});
+function renderPanel(){
+  whoList.querySelectorAll('.who').forEach(b=>{const on=state.on[b.dataset.who];b.setAttribute('aria-pressed',on);b.querySelector('.who-state').textContent=on?'Shown':'Hidden'});
+  track.querySelectorAll('.tdot').forEach(d=>{const s=byId[d.dataset.id];d.classList.toggle('future',s.y>state.t+1e-6);d.classList.toggle('off',!state.on[s.who]);d.classList.toggle('sel',s.id===state.sel)});
+  track.querySelectorAll('.tbar').forEach(d=>{const s=byId[d.dataset.bar];d.classList.toggle('future',s.y>state.t+1e-6);d.classList.toggle('off',!state.on[s.who])});
+  const shown=STEPS.filter(vis).sort((a,b)=>a.y-b.y),lt=shown[shown.length-1];
+  $('#latest').innerHTML=lt?`<span class="bdg ${lt.who}">${lt.n}</span><span>Latest: ${PEOPLE[lt.who].name} at ${PL[lt.place].name}, ${lt.date}</span>`:'<span>No stops yet. Move the slider forward.</span>';
+  stopsEl.innerHTML=STEPS.filter(s=>state.on[s.who]).sort((a,b)=>a.y-b.y).map(s=>`<li><button type="button" class="stop${s.y>state.t+1e-6?' future':''}${s.id===state.sel?' sel':''}" data-id="${s.id}">
+    <span class="bdg ${s.who}">${s.n}</span><span class="stop-b"><span class="stop-h"><b>${PL[s.place].name}</b><span>${PEOPLE[s.who].name}</span></span>
+    <span class="stop-m">${s.ref} · ${s.date}</span><span class="stop-t">${s.text}</span></span></button></li>`).join('')||'<li class="notes">All routes are hidden. Turn one on above.</li>';
+}
+setYear(47,true);renderPanel();
+})();
+</script>
+</body>
+</html>
